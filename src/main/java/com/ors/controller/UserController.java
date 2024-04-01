@@ -13,23 +13,21 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.ors.model.Jobapllications;
 import com.ors.model.Jobs;
-import com.ors.model.PasswordReset;
 import com.ors.model.Recruiter;
 import com.ors.model.ResumeDetails;
 import com.ors.model.User;
-import com.ors.service.MailSenderService;
-import com.ors.service.RecuiterService;
+import com.ors.service.JobapllicationsService;
 import com.ors.service.jobsService;
 import com.ors.service.resumedetailsService;
 import com.ors.service.userService;
 
 @Controller
-public class MainController {
+public class UserController {
 	@Autowired
 	userService userservice;
 	
@@ -38,17 +36,14 @@ public class MainController {
 	
 	@Autowired
 	jobsService jobsservice;
-	
+
 	@Autowired
-	RecuiterService recuiterService;
+	JobapllicationsService jobapllicationsService;
 	
 	@Autowired
 	HttpSession httpsession;
-	
-	@Autowired
-	MailSenderService mailSenderService;
 
-	
+
 	@GetMapping("fill1")
 	public String fillDetails(HttpSession s) {
 		User id=(User) s.getAttribute("id");
@@ -74,15 +69,6 @@ public class MainController {
 		return "user";
 	}
 	
-	@PostMapping("savejob")
-	public String savejob(Jobs jobs, HttpSession s, ModelMap m) {
-		Recruiter id = (Recruiter) s.getAttribute("id");
-		Recruiter r =recuiterService.getRecruiterById(id.getSlno());
-		jobs.setRecruiter(r);
-		jobsservice.saveJobs(jobs);
-		m.put("Msg", "Job successfully posted");
-		return "RecruiterMain";
-	}
 	
 	@GetMapping("/view")
 	public String viewDetails(Model model, HttpSession s) {
@@ -122,6 +108,8 @@ public class MainController {
 		return mv;
 	}
 	
+	
+	
 	@GetMapping("/delete")
 	public String deleteuserdetails(@RequestParam Integer no,ModelMap model) {
 		System.out.println(no);
@@ -136,15 +124,26 @@ public class MainController {
 		}
 	}
 	
-	@GetMapping("jobs")
-	public String jobs() {
-		return "jobs";
+	@GetMapping("search")
+	public String search1(@RequestParam String jobtitle,Model m) {
+		m.addAttribute("jobs", jobsservice.getByTitle(jobtitle));
+		return "Search";
 	}
 	
-	@PostMapping("addJobDetails")
-	public String addjobs(@ModelAttribute("u") Jobs u) {
-		jobsservice.saveJobs(u);
-		return "jobs";
+	@GetMapping("apply")
+	public String apply_for_job(@RequestParam Integer no, HttpSession s, ModelMap m) {
+		Optional<Jobs> j =  jobsservice.getjobsby(no);
+		Jobs job = j.get();
+		User user=(User) s.getAttribute("id");
+		Recruiter recruiter = job.getRecruiter();
+	    Jobapllications J = new Jobapllications();
+	    J.setUser(user);
+	    J.setJobs(job);
+	    J.setRecruiter(recruiter);
+	    jobapllicationsService.saveJobs(J);
+	    m.addAttribute("jobs", jobsservice.getByTitle(job.getJobtitle()));
+		m.put("msg", "Apllied successfully");
+		return "Search";
 	}
 	
 
@@ -155,25 +154,11 @@ public class MainController {
 	}
 	
 	@GetMapping("back")
-	public String back() {
+	public String uback() {
 		return "user";
 	}
 	
-	@GetMapping("search")
-	public String search1(@RequestParam String jobtitle,Model m) {
-		System.out.println("----------"+jobtitle);
-		System.out.println(jobsservice.getByTitle(jobtitle));
-		System.out.println("----------");
-		m.addAttribute("jobs", jobsservice.getByTitle(jobtitle));
-		return "Search";
-	}
 	
-	@GetMapping("back1")
-	public String back1() {
-		return "user";
-	}
-		@GetMapping("back3")
-	public String back3() {
-		return "user";
-	}
+	
+	
 }

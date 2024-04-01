@@ -191,7 +191,6 @@ label {
 		<table>
 			<tr>
 			    <th>slno</th>
-			    <th>recruiter</th>
 			    <th>company</th>
 				<th>Job title</th>
 				<th>Job description</th>
@@ -201,7 +200,6 @@ label {
 			<c:forEach items="${jobs}" var="job">
 				<tr>
 				    <td>${job.slno}</td>
-				    <td>${job.recruiter}</td>
 				    <td>${job.company}</td>
 					<td>${job.jobtitle}</td>
 					<td>${job.jobdescription}</td>

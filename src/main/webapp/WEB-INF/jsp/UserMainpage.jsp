@@ -98,7 +98,7 @@ a:hover {
     <h1>Jobs.Com</h1>
     <h2>${um}</h2>
     <a href="loglout"><button type="submit">Logout</button></a>
-    <a href="back3"><button type="submit">Back</button></a>
+    <a href="back"><button type="submit">Back</button></a>
     </div>
 
 

@@ -14,6 +14,7 @@ public class User {
 	private String username;
 	private String email;
 	private String password;
+	private Long number;
 	
 	public User(Integer slno, String username, String email, String password, Long number) {
 		super();
@@ -29,7 +30,7 @@ public class User {
 	public void setNumber(Long number) {
 		this.number = number;
 	}
-	private Long number;
+	
 	public Integer getSlno() {
 		return slno;
 	}
@@ -59,6 +60,13 @@ public class User {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	@Override
+	public String toString() {
+		return "User [slno=" + slno + ", username=" + username + ", email=" + email + ", password=" + password
+				+ ", number=" + number + "]";
+	}
+	
+	
 	
 
 }

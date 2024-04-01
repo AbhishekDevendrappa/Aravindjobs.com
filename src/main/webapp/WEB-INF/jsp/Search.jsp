@@ -116,13 +116,13 @@ label {
 <div class="toolbar">
 		<h1>Jobs.Com</h1>
 		<h2>${um}</h2>
-		<a href="back1"><button type="submit">Back</button></a>
+		<a href="back"><button type="submit">Back</button></a>
 		<a href="loglout"><button type="submit">Logout</button></a>
 	</div>
+	<h2>${msg}</h2>
 <table>
 			<tr>
 			    <th>slno</th>
-			    <th>recruiter</th>
 			    <th>company</th>
 				<th>Job title</th>
 				<th>Job description</th>
@@ -133,13 +133,12 @@ label {
 			<c:forEach items="${jobs}" var="job">
 				<tr>
 				    <td>${job.slno}</td>
-				    <td>${job.recruiter}</td>
 				    <td>${job.company}</td>
 					<td>${job.jobtitle}</td>
 					<td>${job.jobdescription}</td>
 					<td>${job.joblocation}</td>
 					<td>${job.jobtype}</td>
-					<td><button type="submit">Apply</button></td>
+					<td><a href="apply?no=${job.slno}"><button type="submit">Apply</button></a></td>
 				</tr>
 			</c:forEach>
 		</table>

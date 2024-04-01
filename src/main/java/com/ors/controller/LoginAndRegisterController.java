@@ -1,5 +1,7 @@
 package com.ors.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ors.model.Jobapllications;
 import com.ors.model.PasswordReset;
 import com.ors.model.Recruiter;
 import com.ors.model.User;
-import com.ors.service.MailSenderService;
+import com.ors.service.JobapllicationsService;
 import com.ors.service.RecuiterService;
 import com.ors.service.userService; 
 
@@ -27,11 +30,12 @@ public class LoginAndRegisterController {
 	@Autowired
 	HttpSession httpsession;
 	
-	@Autowired
-	MailSenderService mailSenderService;
 	
 	@Autowired
 	RecuiterService recuiterService;
+	
+	@Autowired
+	JobapllicationsService jobapllicationsService;
 	
 	@GetMapping
 	public String home()
@@ -86,7 +90,6 @@ public class LoginAndRegisterController {
 	public String Admin_Login(ModelMap model, @RequestParam String Adminname, @RequestParam String Password) {
 		if(Adminname.equals("admin") && Password.equals("123"))
 		{		
-			mailSenderService.sendEmaillogin("abhisd2000@gmail.com", "Adminlogin to ORS", "Admin Login Sucessfully Done.....");
 				return "Adminmain";
 		}else{
 			model.put("errorMsg", "Invalid username or password");
@@ -97,7 +100,6 @@ public class LoginAndRegisterController {
 	@PostMapping("add")
 	public String register_user(@ModelAttribute("u") User u,ModelMap model) {
 		userservice.saveUser(u);
-		    mailSenderService.sendEmailregistration("abhisd2000@gmail.com", "Registration to ORS", "Registration Sucessfully Done.....",u.getUsername(),u.getPassword());
 			model.put("registerMsg", "User registered successfully");
 		return "Afterregister";
 	}
@@ -105,7 +107,6 @@ public class LoginAndRegisterController {
 	@PostMapping("addreciuter")
 	public String register_recuiter(@ModelAttribute("r") Recruiter r,ModelMap model) {
 		recuiterService.saveRecuiter(r);
-		    mailSenderService.sendEmailregistration(r.getEmail(), "Registration to ORS", "Registration Sucessfully Done.....",r.getName(),r.getPassword());
 			model.put("registerMsg", "User registered successfully");
 		return "RecruiterLogin";
 	}
@@ -116,14 +117,12 @@ public class LoginAndRegisterController {
 		
 		if(user==null) {	
 			model.put("errorMsg", "Invalid username or password");
-			return "login";
+			return "Userlogin";
 			
 		}else{
 			String a = user.getUsername();
-			String uemail= user.getEmail();
 			model.put("um", a);
 			s.setAttribute("id", user);
-			mailSenderService.sendEmaillogin(uemail, "login to ORS", "Login Sucessfully Done.....");
 				return "user";
 		}
 	}
@@ -134,10 +133,11 @@ public class LoginAndRegisterController {
 		Recruiter r = recuiterService.getrecuiter(email, password);
 		if(r!=null) {		
 			String a = r.getName();
-			String reemail = r.getEmail();
 			model.put("um", a);
 			s.setAttribute("id", r);
-			mailSenderService.sendEmaillogin(reemail, "login to ORS", "Login Sucessfully Done.....");
+		    List<Jobapllications> j = jobapllicationsService.getjobapplied(r);
+		    model.addAttribute("aplliedjobs", j);
+		        
 				return "RecruiterMain";
 		}else{
 			model.put("errorMsg", "Invalid username or password");
