@@ -105,8 +105,8 @@ th {
                     <td>${j.jobs.company}</td>
                     <td>${j.jobs.jobtype}</td>
                     <td><a href="showresume?no=${j.user.slno}">View Resume</a></td>
-                    <td><a href="intervie?no=${j.user.username}">Schedual Intervie</a></td>
-                    <td><a href="offerletter?no=${j.user.username}">release offer letter</a></td>
+                    <td><a href="interview?no=${j.user.username}">Schedual Intervie</a></td>
+                    <td><a href="offerletter?no=${j.user.slno}">release offer letter</a></td>
                     <td><a href="reject?no=${j.slno}">Reject</a></td>
                 </tr>
             </c:forEach>

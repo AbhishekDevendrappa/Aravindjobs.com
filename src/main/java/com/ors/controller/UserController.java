@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ors.model.Block;
 import com.ors.model.Jobapllications;
 import com.ors.model.Jobs;
 import com.ors.model.Recruiter;
 import com.ors.model.ResumeDetails;
 import com.ors.model.User;
+import com.ors.service.BlockService;
 import com.ors.service.JobapllicationsService;
 import com.ors.service.jobsService;
 import com.ors.service.resumedetailsService;
@@ -42,6 +44,9 @@ public class UserController {
 	
 	@Autowired
 	HttpSession httpsession;
+	
+	@Autowired
+	BlockService blockService;
 
 
 	@GetMapping("fill1")
@@ -135,14 +140,21 @@ public class UserController {
 		Optional<Jobs> j =  jobsservice.getjobsby(no);
 		Jobs job = j.get();
 		User user=(User) s.getAttribute("id");
-		Recruiter recruiter = job.getRecruiter();
-	    Jobapllications J = new Jobapllications();
-	    J.setUser(user);
-	    J.setJobs(job);
-	    J.setRecruiter(recruiter);
-	    jobapllicationsService.saveJobs(J);
-	    m.addAttribute("jobs", jobsservice.getByTitle(job.getJobtitle()));
-		m.put("msg", "Apllied successfully");
+	    Optional<Block> b =	blockService.getbyId(user.getSlno());
+	    System.out.println(b);
+	    if(b.isEmpty()) {
+	    	Recruiter recruiter = job.getRecruiter();
+		    Jobapllications J = new Jobapllications();
+		    J.setUser(user);
+		    J.setJobs(job);
+		    J.setRecruiter(recruiter);
+		    jobapllicationsService.saveJobs(J);
+		    m.addAttribute("jobs", jobsservice.getByTitle(job.getJobtitle()));
+			m.put("msg", "Apllied successfully");
+	    }else {
+	    	m.put("msg", "You have already offered more than 3 offers so you have been blocked from apllying the job");
+	    }
+		
 		return "Search";
 	}
 	

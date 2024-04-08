@@ -15,12 +15,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ors.model.Jobapllications;
 import com.ors.model.Jobs;
+import com.ors.model.OfferlettterDetails;
 import com.ors.model.Recruiter;
 import com.ors.model.ResumeDetails;
+import com.ors.model.User;
 import com.ors.service.JobapllicationsService;
+import com.ors.service.OfferletterDetailsService;
 import com.ors.service.RecuiterService;
 import com.ors.service.jobsService;
 import com.ors.service.resumedetailsService;
+import com.ors.service.userService;
 
 @Controller
 public class RecruiterController {
@@ -36,6 +40,12 @@ public class RecruiterController {
 	
 	@Autowired
 	RecuiterService recuiterService;
+	
+	@Autowired
+	userService userService;
+	
+	@Autowired
+	OfferletterDetailsService offerletterDetailsService;
 
 	@GetMapping("/viewJobApplications")
 	public ModelAndView job_applications(HttpSession s) {
@@ -76,15 +86,28 @@ public class RecruiterController {
 	}
 	
 	@GetMapping("offerletter")
-	public String Releaseoffer(@RequestParam String no, ModelMap m, HttpSession s) {
-		m.put("offer", "Offer Letter Successfully Released to "+no);
+	public String Releaseoffer(@RequestParam Integer no, ModelMap m, HttpSession s) {
+		User u = userService.getUserById(no);
+		OfferlettterDetails o = new OfferlettterDetails();
+		OfferlettterDetails find = (OfferlettterDetails) offerletterDetailsService.getByslno(no);
+		
+		if(find != null) {
+			find.setOfferletterofffered(find.getOfferletterofffered()+1);
+			offerletterDetailsService.save(find);
+		}else {
+			o.setUser(u);
+			o.setOfferletterofffered(1);
+			offerletterDetailsService.save(o);
+		}
+		
+		m.put("offer", "Offer Letter Successfully Released to "+u.getUsername());
 		Recruiter r = (Recruiter) s.getAttribute("id");
 		List<Jobapllications> j = jobapllicationsService.getjobapplied(r);
 	    m.addAttribute("aplliedjobs", j);
 		return "RecruiterMain";
 	}
 
-	@GetMapping("intervie")
+	@GetMapping("interview")
 	public String Interview(@RequestParam String no, ModelMap m, HttpSession s) {
 		m.put("offer", "Interview Successfully Scheduled with "+no);
 		Recruiter r = (Recruiter) s.getAttribute("id");
